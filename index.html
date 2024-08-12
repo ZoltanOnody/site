@@ -31,22 +31,145 @@
 		<img class="logo" src="logo-no-background.svg">
 		<table>
 			<tr>
-				<td>onzo s.r.o.</td>
-				<td>IČO: 54828317</td>
+				<td id="name"></td>
+				<td id="companyid"></td>
 			</tr>
 			<tr>
-				<td>Jantárová 11062/3</td>
-				<td>DIČ: 2121794642</td>
+				<td id="address1"></td>
+				<td id="taxid"></td>
 			</tr>
 			<tr>
-				<td>940 02 Nové Zámky</td>
-				<td>IČ DPH: SK2121794642</td>
+				<td id="address2"></td>
+				<td id="moreinfo"></td>
 			</tr>
 			<tr>
-				<td>onzosro@gmail.com</td>
+				<td id="address3"></td>
+				<td id="email"></td>
 			</tr>
 		</table>
 	</div>
+	<p>
+		<em id="set-language"></em>
+		<em id="set-company"></em>
+	</p>
 </div>
+<script>
+	const urlParams = () => {
+		const queryString = window.location.search;
+		return new URLSearchParams(queryString);
+	}
+
+	const render = (id, text) => {
+		document.getElementById(id).innerText = text;
+	}
+
+	const setParam = (id, text, href) => {
+		let a = document.createElement('a');
+		a.href = href
+		a.title = text;
+		a.appendChild(document.createTextNode(text));
+		document.getElementById(id).appendChild(a);
+	}
+
+	const changeLang = (current) => {
+		const change = {'sk': 'en', 'en': 'sk'}[current];
+		const url = urlParams();
+		url.set('lang', change);
+		if (change === defaultLang) {
+			url.delete('lang');
+		}
+		setParam('set-language', change, '?' + url.toString());
+	}
+
+	const changeCompany = (current) => {
+		const change = {'personal': 'onzo', 'onzo': 'personal'}[current]
+		const url = urlParams();
+		url.set('company', change);
+		if (change === defaultCompany) {
+			url.delete('company');
+		}
+		setParam('set-company', change, '?' + url.toString());
+	}
+
+	const defaultLang = 'sk';
+	const defaultCompany = 'onzo'
+
+	const main = () => {
+		let lang = urlParams().get('lang');
+		let company = urlParams().get('company');
+
+		if (lang !== "sk" && lang !== "en") {
+			lang = defaultLang
+		}
+		if (company !== "onzo" && company !== "personal") {
+			company = defaultCompany;
+		}
+
+		let obj = data.lang[lang][company];
+
+		render('name', obj.name);
+		render('email', obj.email);
+		render('address1', obj.address1);
+		render('address2', obj.address2);
+		render('address3', obj.address3);
+		render('taxid', obj.taxid);
+		render('companyid', obj.companyid);
+		render('moreinfo', obj.moreinfo);
+
+		changeLang(lang);
+		changeCompany(company);
+	}
+
+	const data = {
+		lang: {
+			sk: {
+				onzo: {
+					name: 'onzo s.r.o',
+					email: 'onzosro@gmail.com',
+					address1: 'Jantárová 11062/3',
+					address2: '940 02 Nové Zámky',
+					address3: 'Slovensko',
+					companyid: 'IČO: 54828317',
+					taxid: 'DIČ: 2121794642',
+					moreinfo: 'IČ DPH: SK2121794642'
+				},
+				personal: {
+					name: 'Bc. Zoltán Onódy',
+					email: 'zoltanonody@gmail.com',
+					address1: 'Jantárová 11062/3',
+					address2: '940 02 Nové Zámky',
+					address3: 'Slovensko',
+					companyid: 'IČO: 56425759',
+					taxid: 'DIČ: 1125282862',
+					moreinfo: 'Nie som platca DPH.'
+				}
+			},
+			en: {
+				onzo: {
+					name: 'NAME: onzo s.r.o',
+					email: 'onzosro@gmail.com',
+					address1: 'Jantarova 11062/3',
+					address2: '940 02 Nove Zamky',
+					address3: 'Slovakia',
+					companyid: 'Company ID: 54828317',
+					taxid: 'TAX ID: 2121794642',
+					moreinfo: 'VAT ID: SK2121794642'
+				},
+				personal: {
+					name: 'Bc. Zoltan Onody',
+					email: 'zoltanonody@gmail.com',
+					address1: 'Jantarova 11062/3',
+					address2: '940 02 Nove Zamky',
+					address3: 'Slovensko',
+					companyid: 'Company ID: 56425759',
+					taxid: 'TAX ID: 1125282862',
+					moreinfo: 'Not VAT payer.'
+				}
+			}
+		}
+	}
+
+	main();
+</script>
 </body>
 </html>
